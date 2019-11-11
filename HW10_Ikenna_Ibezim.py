@@ -18,8 +18,8 @@ class Student:
         
     def add_course(self, course, grade):
         """Storing the grade associated with a course for this student"""
-      
-        self._courses[course] = grade # so we created a function for getting the grade and course and adding it both into a dictonary for later use 
+        if (grade in ['A', 'A-', 'B+', 'B', 'B-', 'C+',  'C']):
+            self._courses[course] = grade # so we created a function for getting the grade and course and adding it both into a dictonary for later use 
 
 
 class Instructor:
