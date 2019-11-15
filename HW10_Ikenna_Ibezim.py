@@ -54,18 +54,19 @@ class Repository:
     instructor
     """
 
-
     def __init__(self,path, ptable=False):
         """Function to represent the parameters of the class student and instructor"""
         
         self._majors = dict() #storing the 
         self._students = dict() #students[cwid]=student()
         self._instructor = dict() #instruction[cwid]= instructions()
-
-        self._get_majors(os.path.join(path, "majors.txt"))
-        self._get_students(os.path.join(path, "students.txt"))
-        self._get_instructor(os.path.join(path, "instructors.txt"))
-        self._get_grades(os.path.join(path, "grades.txt"))
+        try:
+            self._get_majors(os.path.join(path, "majors.txt"))
+            self._get_students(os.path.join(path, "students.txt"))
+            self._get_instructor(os.path.join(path, "instructors.txt"))
+            self._get_grades(os.path.join(path, "grades.txt"))
+        except FileNotFoundError:
+            print("You entered the wrong directory")
        
         if ptable: 
             self.major_prettytable()
@@ -84,30 +85,46 @@ class Repository:
                     self._majors[maj]._required.add(course) # addding courses to the 
                 elif r_e == "E":
                          self._majors[maj]._electives.add(course)
+               
         except ValueError as ik:
             print(f"There was an error {ik} after attempting to get student details at {course}")
+        
+        except KeyError as ik:
+            print(f"There was an error {ik} after attempting to get student details at {maj}")
+    
        
     def _get_students(self, path):
         """Getting the student details from the file path"""
 
         try:
             for cwid, name, dept in file_reading_gen(path, 3, sep=';', header=True):
-                self._students[cwid] = Student(cwid, name, dept)
+                if dept in self._majors.keys():
+                    self._students[cwid] = Student(cwid, name, dept)
+                else:
+                    print(f"didnt find students major {dept} whose Department was mentioned for student {cwid}")
+               
         except FileNotFoundError:
             print(f"Cant find any file ")
         except ValueError:
             print(f"Wrong value for student with {cwid}")
+
+
 
     def _get_instructor(self, path):
         """Getting the instructors details from the file path"""
         
         try:
             for cwid, name, dept in file_reading_gen(path, 3, sep='|', header=True):
-                self._instructor[cwid] = Instructor(cwid, name, dept)
+                if dept in self._majors.keys():
+                    self._instructor[cwid] = Instructor(cwid, name, dept)
+                else:
+                    print(f"didnt find Prof major {dept} whose Department was mentioned for Prof with {cwid} ")
         except FileNotFoundError:
             print(f"Cant find files")
         except ValueError:
             print(f"cant find any other details related to {cwid}")
+        
+    
 
     def _get_grades(self, path):
         """Getting the grades details from the file path"""
@@ -138,7 +155,7 @@ class Repository:
         
         pretty_table = PrettyTable(field_names=['CWID', 'Name', 'Major', 'Completed Courses', 'Remaining Courses', 'Remaining Electives'])
         for student in self._students.values():            
-            pretty_table.add_row([student._cwid, student._name, student._dept, sorted(student._courses.keys()), sorted(self._majors[student._dept]._required-student._courses.keys()), (self._majors[student._dept]._electives-student._courses.keys() if len(self._majors[student._dept]._electives-student._courses.keys())==3 else None)])
+            pretty_table.add_row([student._cwid, student._name, student._dept, sorted(student._courses.keys()), sorted(self._majors[student._dept]._required-student._courses.keys()), (self._majors[student._dept]._electives-student._courses.keys() if len(self._majors[student._dept]._electives-student._courses.keys())>= 1 else None)])
 
         print(pretty_table)
  
@@ -155,8 +172,11 @@ def main():
     """
     Test cases
     """  
-    stevens = Repository("/Users/ikenna/Downloads/se810", ptable=True)
-    print(stevens)                                                                                                                                                                                                                                                                                                                                                                                            
+    try:
+        stevens = Repository("/Users/ikenna/Downloads/se810", ptable=True)
+        print(stevens)    
+    except FileNotFoundError:
+        print("wrong path")                                                                                                                                                                                                                                                                                                                                                                                      
 if __name__ == "__main__":
     main()
 

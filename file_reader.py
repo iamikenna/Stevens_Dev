@@ -17,7 +17,7 @@ def file_reading_gen(path,fields, sep, header=True):
                 store2 = store.split(sep)
                 len1 = len(store2)
                 if len1 != fields:
-                    raise ValueError(f"{path} has {len1} fields on line {line_c} but expected 3 fields")
+                    print(f"{path} has {len1} fields on line {line_c} but expected {fields} fields")
                     continue
                 else:
                     if line_c == 1 and header is True:
