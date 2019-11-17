@@ -61,6 +61,7 @@ class Repository:
         self._majors = dict() #storing the majors e.t.c
         self._students = dict() #students[cwid]=student()
         self._instructor = dict() #instruction[cwid]= instructions()
+        self._second = dict() #storing the data from db
         try:
             self._get_majors(os.path.join(path, "majors.txt"))
             self._get_students(os.path.join(path, "students.txt"))
@@ -86,15 +87,15 @@ class Repository:
                 if r_e == "R":
                     self._majors[maj]._required.add(course) # addding courses to the 
                 elif r_e == "E":
-                         self._majors[maj]._electives.add(course)
-               
+                    self._majors[maj]._electives.add(course)
+    
         except ValueError as ik:
             print(f"There was an error {ik} after attempting to get student details at {course}")
         
         except KeyError as ik:
             print(f"There was an error {ik} after attempting to get student details at {maj}")
     
-       
+
     def _get_students(self, path):
         """Getting the student details from the file path"""
 
@@ -109,7 +110,6 @@ class Repository:
             print(f"Cant find any file ")
         except ValueError:
             print(f"Wrong value for student with {cwid}")
-
 
 
     def _get_instructor(self, path):
@@ -141,7 +141,12 @@ class Repository:
             pretty_in = PrettyTable(field_names=['CWID', 'Name', 'Dept', 'Course', 'Students'])
             for row in db.execute(query): # getting data from the database and putting it on the new pretty table
                 pretty_in.add_row(row) 
+                self._second[row] = row
+            # print(self._second)
             print(pretty_in)
+
+          
+          
 
       
     def _get_grades(self, path):
@@ -153,7 +158,7 @@ class Repository:
                     self._students[cwid].add_course(course, grade)
                 else: 
                     print(f"dint find student with {cwid}")
-           
+
                 if instructor_cwid in self._instructor.keys():
                         self._instructor[instructor_cwid].get_student_no(course)
                 else:
@@ -163,10 +168,10 @@ class Repository:
             print("Not getting the details for the user")
 
     def major_prettytable(self):
+        store_major = dict()
         pretty_table3 = PrettyTable(field_names=['Dept', 'Required', 'Electives'])
         for maj2 in self._majors.values():
             pretty_table3.add_row([maj2.dept, maj2._required, maj2._electives])
-
         print(pretty_table3)
     
     def student_prettytable(self):
