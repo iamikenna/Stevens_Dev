@@ -155,7 +155,7 @@ class Repository:
         
         pretty_table = PrettyTable(field_names=['CWID', 'Name', 'Major', 'Completed Courses', 'Remaining Courses', 'Remaining Electives'])
         for student in self._students.values():            
-            pretty_table.add_row([student._cwid, student._name, student._dept, sorted(student._courses.keys()), sorted(self._majors[student._dept]._required-student._courses.keys()), (self._majors[student._dept]._electives-student._courses.keys() if len(self._majors[student._dept]._electives-student._courses.keys())>= 1 else None)])
+            pretty_table.add_row([student._cwid, student._name, student._dept, sorted(student._courses.keys()), sorted(self._majors[student._dept]._required-student._courses.keys()), (self._majors[student._dept]._electives-student._courses.keys() if len(self._majors[student._dept]._electives-student._courses.keys())==3 else None)])
 
         print(pretty_table)
  
@@ -173,7 +173,7 @@ def main():
     Test cases
     """  
     try:
-        stevens = Repository("/Users/ikenna/Downloads/se810", ptable=True)
+        stevens = Repository("/Users/ikenna/Downloads/se810/HW10 files real files", ptable=True)
         print(stevens)    
     except FileNotFoundError:
         print("wrong path")                                                                                                                                                                                                                                                                                                                                                                                      
