@@ -1,0 +1,25 @@
+
+
+{% extends 'base.html' %}
+{% block body %}
+<h2>{{ my_header}}</h2>
+<h3>{{ my_header2}}</h3>
+<table border="1">
+    <th>CWID</th>
+    <th>NAME</th>
+    <th>DEPARTMENT</th>
+    <th>COURSE</th>
+    <th>NO. OF STUDENTS</th>
+    {% for instructor in instructors %}
+        <tr>
+            <td>{{instructor.Cwid}}</td>
+            <td>{{instructor.Name}}</td>
+            <td>{{instructor.Dept}}</td>
+            <td>{{instructor.Course}}</td>
+            <td>{{instructor.Course_count}}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+
+{% endblock %}
